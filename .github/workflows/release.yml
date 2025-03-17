@@ -35,5 +35,4 @@ jobs:
         with:
           token: ${{ secrets.GH_TOKEN }}
           gist_id: ${{ secrets.GIST_ID }}
-          file_path: default.conf
-          file_type: text
+          file_path: ./default.conf
