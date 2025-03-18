@@ -345,4 +345,4 @@ hostname = www.google.cn`
 ## {direct-accelerate} 加速直连规则
 ```
 
-> 感谢[shadowrocket-rules](https://github.com/GMOogway/shadowrocket-rules)提供的规则集
+> 感谢[shadowrocket-rules](https://github.com/GMOogway/shadowrocket-rules)和[ios_rule_script](https://github.com/blackmatrix7/ios_rule_script)提供的规则集
