@@ -8,7 +8,7 @@ def read_file(file_path):
 
 def write_file(file_path, content):
     os.makedirs(os.path.dirname(file_path), exist_ok=True)
-    with open(file_path, 'w', encoding='utf-8') as file:
+    with open(file_path, 'w+', encoding='utf-8') as file:
         file.write(content)
 
 def process_strategy(general_content, base_content, strategy_content, custom_direct, custom_proxy, custom_reject):
