@@ -22,24 +22,21 @@ def write_file(file_path, content):
 
 def replace_direct(strategy_content):
     """
-    Replace the {direct} placeholder in the strategy content with the actual content
-    from the direct.conf file.
+    替换策略内容中的 {direct} 占位符为 direct.conf 文件中的实际内容。
     """
     direct_content = read_file('config/rules/direct.conf')
     return strategy_content.replace('{direct}', direct_content)
 
 def replace_reject(strategy_content):
     """
-    Replace the {reject} placeholder in the strategy content with the actual content
-    from the reject.conf file.
+    替换策略内容中的 {reject} 占位符为 reject.conf 文件中的实际内容。
     """
     reject_content = read_file('config/rules/reject.conf')
     return strategy_content.replace('{reject}', reject_content)
 
 def replace_proxy(strategy_content):
     """
-    Replace the {proxy} placeholder in the strategy content with the content fetched
-    from a remote URL. Ensure to replace with the actual content obtained via HTTP.
+    替换策略内容中的 {proxy} 占位符为通过 HTTP 请求获取的远程 URL 内容。
     """
     import requests
     response = requests.get('http://example.com/proxy.conf') # 替换为实际的URL
@@ -48,16 +45,15 @@ def replace_proxy(strategy_content):
 
 def replace_direct_accelerate(strategy_content):
     """
-    Replace the {direct-accelerate} placeholder in the strategy content with the content
-    from the direct.conf file. This assumes the direct-accelerate content matches the direct rules.
+    替换策略内容中的 {direct-accelerate} 占位符为 direct.conf 文件中的内容。
+    假设 direct-accelerate 内容与直连规则一致。
     """
     direct_accelerate_content = read_file('config/rules/direct.conf') # 假设加速规则与直连规则一致
     return strategy_content.replace('{direct-accelerate}', direct_accelerate_content)
 
 def replace_proxy_accelerate(strategy_content):
     """
-    Replace the {proxy-accelerate} placeholder in the strategy content with the content fetched
-    from a remote URL for accelerated proxy rules.
+    替换策略内容中的 {proxy-accelerate} 占位符为远程 URL 中获取的加速代理规则内容。
     """
     import requests
     response = requests.get('http://example.com/proxy-accelerate.conf') # 替换为实际的URL
