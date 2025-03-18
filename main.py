@@ -1,7 +1,6 @@
 # 处理小火箭配置文件的入口文件
 
 import os
-import re
 from datetime import datetime
 import requests
 
@@ -12,9 +11,9 @@ rule_module_line = '[Rule]'
 # 直连地址
 direct_url = 'https://cdn.jsdelivr.net/gh/GMOogway/shadowrocket-rules@master/sr_direct_list.module'
 # 代理地址
-proxy_url = 'https://raw.githubusercontent.com/GMOogway/shadowrocket-rules/master/sr_proxy_list.module'
+proxy_url = 'https://cdn.jsdelivr.net/gh/GMOogway/shadowrocket-rules@master/sr_proxy_list.module'
 # 拦截地址
-reject_url = 'https://raw.githubusercontent.com/GMOogway/shadowrocket-rules/master/sr_reject_list.module'
+reject_url = 'https://cdn.jsdelivr.net/gh/GMOogway/shadowrocket-rules@master/sr_reject_list.module'
 
 
 def read_file(file_path):
