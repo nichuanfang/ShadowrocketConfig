@@ -3,6 +3,9 @@
 import os
 from datetime import datetime
 
+import os
+from datetime import datetime
+
 # 通用模块
 general_module_line = '[General]\n'
 #路由模块
@@ -18,24 +21,44 @@ def write_file(file_path, content):
         file.write(content)
 
 def replace_direct(strategy_content):
+    """
+    Replace the {direct} placeholder in the strategy content with the actual content
+    from the direct.conf file.
+    """
     direct_content = read_file('config/rules/direct.conf')
     return strategy_content.replace('{direct}', direct_content)
 
 def replace_reject(strategy_content):
+    """
+    Replace the {reject} placeholder in the strategy content with the actual content
+    from the reject.conf file.
+    """
     reject_content = read_file('config/rules/reject.conf')
     return strategy_content.replace('{reject}', reject_content)
 
 def replace_proxy(strategy_content):
+    """
+    Replace the {proxy} placeholder in the strategy content with the content fetched
+    from a remote URL. Ensure to replace with the actual content obtained via HTTP.
+    """
     import requests
     response = requests.get('http://example.com/proxy.conf') # 替换为实际的URL
     proxy_content = response.text
     return strategy_content.replace('{proxy}', proxy_content)
 
 def replace_direct_accelerate(strategy_content):
+    """
+    Replace the {direct-accelerate} placeholder in the strategy content with the content
+    from the direct.conf file. This assumes the direct-accelerate content matches the direct rules.
+    """
     direct_accelerate_content = read_file('config/rules/direct.conf') # 假设加速规则与直连规则一致
     return strategy_content.replace('{direct-accelerate}', direct_accelerate_content)
 
 def replace_proxy_accelerate(strategy_content):
+    """
+    Replace the {proxy-accelerate} placeholder in the strategy content with the content fetched
+    from a remote URL for accelerated proxy rules.
+    """
     import requests
     response = requests.get('http://example.com/proxy-accelerate.conf') # 替换为实际的URL
     proxy_accelerate_content = response.text
