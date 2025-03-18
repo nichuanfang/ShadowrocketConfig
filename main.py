@@ -17,6 +17,30 @@ def write_file(file_path, content):
     with open(file_path, 'w+', encoding='utf-8') as file:
         file.write(content)
 
+def replace_direct(strategy_content):
+    direct_content = read_file('config/rules/direct.conf')
+    return strategy_content.replace('{direct}', direct_content)
+
+def replace_reject(strategy_content):
+    reject_content = read_file('config/rules/reject.conf')
+    return strategy_content.replace('{reject}', reject_content)
+
+def replace_proxy(strategy_content):
+    import requests
+    response = requests.get('http://example.com/proxy.conf') # 替换为实际的URL
+    proxy_content = response.text
+    return strategy_content.replace('{proxy}', proxy_content)
+
+def replace_direct_accelerate(strategy_content):
+    direct_accelerate_content = read_file('config/rules/direct.conf') # 假设加速规则与直连规则一致
+    return strategy_content.replace('{direct-accelerate}', direct_accelerate_content)
+
+def replace_proxy_accelerate(strategy_content):
+    import requests
+    response = requests.get('http://example.com/proxy-accelerate.conf') # 替换为实际的URL
+    proxy_accelerate_content = response.text
+    return strategy_content.replace('{proxy-accelerate}', proxy_accelerate_content)
+
 def process_strategy(general_content, base_content, strategy_content, custom_direct, custom_proxy, custom_reject):
     # 通用配置
     combined_content = general_module_line + general_content + '\n'
