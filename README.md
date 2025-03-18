@@ -330,3 +330,5 @@ Rewrite: BoxJs = type=http-request,pattern=https?:\/\/boxjs\.(com|net),script-pa
 
 hostname = www.google.cn`
 ```
+
+> 感谢[shadowrocket-rules](https://github.com/GMOogway/shadowrocket-rules)提供的规则集
