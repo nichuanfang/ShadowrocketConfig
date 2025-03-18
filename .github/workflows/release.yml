@@ -26,7 +26,6 @@ jobs:
 
       # prepare config
       - name: prepare
-        working-directory: ./src
         run: |
           python main.py
 
