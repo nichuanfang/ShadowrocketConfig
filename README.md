@@ -2,7 +2,7 @@
 
 A repository for shadowrocket
 
-## 配置说明
+## 1.配置说明
 
 ```markdown
 [General]
@@ -329,6 +329,20 @@ Rewrite: BoxJs = type=http-request,pattern=https?:\/\/boxjs\.(com|net),script-pa
 # Shadowrocket 仅会解密 hostname 指定的域名的请求，可以使用通配符。也可以使用前缀 - 排除特定主机名，如 -_.example.com。iOS 系统和某些应用有严格的安全策略，仅信任某些特定的证书，对这些域名启动解密可能导致问题，如 _.apple.com，\*.icloud.com。
 
 hostname = www.google.cn`
+```
+
+## 2.占位符说明
+
+```conf
+# 占位符说明
+## {custom-direct} 自定义直连规则
+## {direct} 直连规则
+## {custom-proxy} 自定义代理规则
+## {proxy} 代理规则
+## {custom-reject} 自定义拦截规则
+## {reject} 拦截规则
+## {proxy-accelerate} 加速代理规则
+## {direct-accelerate} 加速直连规则
 ```
 
 > 感谢[shadowrocket-rules](https://github.com/GMOogway/shadowrocket-rules)提供的规则集
