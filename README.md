@@ -1,2 +1,3 @@
 # ShadowrocketConfig
-A repository for shadowrocket.
+
+A repository for shadowrocket
