@@ -25,6 +25,12 @@ def process_strategy(general_content, base_content, strategy_content, custom_dir
     strategy_content = strategy_content.replace('{custom-direct}', custom_direct)
     strategy_content = strategy_content.replace('{custom-proxy}', custom_proxy)
     strategy_content = strategy_content.replace('{custom-reject}', custom_reject)
+    strategy_content = replace_direct(strategy_content)
+    strategy_content = replace_reject(strategy_content)
+    strategy_content = replace_proxy(strategy_content)
+    strategy_content = replace_direct_accelerate(strategy_content)
+    strategy_content = replace_proxy_accelerate(strategy_content)
+    
     combined_content = combined_content + strategy_content + '\n'
     #基础配置
     combined_content = combined_content + base_content
