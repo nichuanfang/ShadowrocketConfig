@@ -5,9 +5,9 @@ from datetime import datetime
 import requests
 
 # 通用模块
-general_module_line = '[General]'
+general_module_line = '[General]\n'
 #路由模块
-rule_module_line = '[Rule]'
+rule_module_line = '[Rule]\n'
 # 直连地址
 direct_url = 'https://cdn.jsdelivr.net/gh/GMOogway/shadowrocket-rules@master/sr_direct_list.module'
 # 代理地址
@@ -86,7 +86,7 @@ def replace_proxy_accelerate(strategy_content):
 
 def process_strategy(general_content, base_content, strategy_content, custom_direct, custom_proxy, custom_reject):
     # 通用配置
-    combined_content = general_module_line + general_content + '\n\n'
+    combined_content = general_module_line + general_content + '\n'
     #路由规则
     combined_content = combined_content + rule_module_line + '\n'
     strategy_content = strategy_content.replace('{custom-direct}', custom_direct) + '\n'
