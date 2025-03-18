@@ -11,18 +11,21 @@ def write_file(file_path, content):
     with open(file_path, 'w', encoding='utf-8') as file:
         file.write(content)
 
-def process_strategy(strategy_file, custom_direct, custom_proxy, custom_reject):
-    content = read_file(strategy_file)
-    content = content.replace('{custom-direct}', custom_direct)
-    content = content.replace('{custom-proxy}', custom_proxy)
-    content = content.replace('{custom-reject}', custom_reject)
-    return content
+def process_strategy(base_content, strategy_content, custom_direct, custom_proxy, custom_reject):
+    combined_content = base_content + strategy_content
+    combined_content = combined_content.replace('{custom-direct}', custom_direct)
+    combined_content = combined_content.replace('{custom-proxy}', custom_proxy)
+    combined_content = combined_content.replace('{custom-reject}', custom_reject)
+    return combined_content
 
 def main():
     # 读取自定义规则
     custom_direct = read_file('src/rules/direct.conf')
     custom_proxy = read_file('src/rules/proxy.conf')
     custom_reject = read_file('src/rules/reject.conf')
+
+    # 读取base.conf
+    base_content = read_file('base.conf')
 
     # 处理每种策略
     strategy_files = [
@@ -38,7 +41,8 @@ def main():
 
     for strategy_file in strategy_files:
         strategy_name = os.path.basename(strategy_file)
-        output_content = process_strategy(strategy_file, custom_direct, custom_proxy, custom_reject)
+        strategy_content = read_file(strategy_file)
+        output_content = process_strategy(base_content, strategy_content, custom_direct, custom_proxy, custom_reject)
         write_file(f'dist/{strategy_name}', output_content)
 
 if __name__ == '__main__':
