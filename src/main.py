@@ -1,6 +1,7 @@
 # 处理小火箭配置文件的入口文件
 
 import os
+from datetime import datetime
 
 def read_file(file_path):
     with open(file_path, 'r', encoding='utf-8') as file:
@@ -28,6 +29,8 @@ def main():
     # 读取base.conf和general.conf
     base_content = read_file('base.conf')
     general_content = read_file('src/general/general.conf')
+    current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    general_content = general_content.replace("2025-03-17 12:26:43", current_time)
 
     # 处理每种策略
     strategy_files = [
