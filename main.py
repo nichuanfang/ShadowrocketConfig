@@ -117,12 +117,12 @@ def main():
     strategy_files = [
         'config/strategy/black.conf',
         'config/strategy/black_ad.conf',
-        'config/strategy/black_ accelerate.conf',
-        'config/strategy/black_ accelerate_ad.conf',
+        'config/strategy/black_accelerate.conf',
+        'config/strategy/black_accelerate_ad.conf',
         'config/strategy/white.conf',
         'config/strategy/white_ad.conf',
-        'config/strategy/white_ accelerate.conf',
-        'config/strategy/white_ accelerate_ad.conf'
+        'config/strategy/white_accelerate.conf',
+        'config/strategy/white_accelerate_ad.conf'
     ]
 
     for strategy_file in strategy_files:
