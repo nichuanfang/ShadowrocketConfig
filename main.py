@@ -74,19 +74,15 @@ def replace_direct_accelerate(strategy_content):
     替换策略内容中的 {direct-accelerate} 占位符为 direct.conf 文件中的内容。
     假设 direct-accelerate 内容与直连规则一致。
     """
-    # direct_accelerate_content = read_file('config/rules/direct.conf') # 假设加速规则与直连规则一致
-    # return strategy_content.replace('{direct-accelerate}', direct_accelerate_content)
-    pass
+    direct_accelerate_content = read_file('config/rules/direct_accelerate.conf')
+    return strategy_content.replace('{direct-accelerate}', direct_accelerate_content)
 
 def replace_proxy_accelerate(strategy_content):
     """
     替换策略内容中的 {proxy-accelerate} 占位符为远程 URL 中获取的加速代理规则内容。
     """
-    # import requests
-    # response = requests.get('http://example.com/proxy-accelerate.conf') # 替换为实际的URL
-    # proxy_accelerate_content = response.text
-    # return strategy_content.replace('{proxy-accelerate}', proxy_accelerate_content)
-    pass
+    proxy_accelerate_content = read_file('config/rules/proxy_accelerate.conf')
+    return strategy_content.replace('{proxy-accelerate}', proxy_accelerate_content)
 
 def process_strategy(general_content, base_content, strategy_content, custom_direct, custom_proxy, custom_reject):
     # 通用配置
@@ -99,8 +95,8 @@ def process_strategy(general_content, base_content, strategy_content, custom_dir
     strategy_content = replace_direct(strategy_content) + '\n'
     strategy_content = replace_reject(strategy_content) + '\n'
     strategy_content = replace_proxy(strategy_content) + '\n'
-    # strategy_content = replace_direct_accelerate(strategy_content) + '\n'
-    # strategy_content = replace_proxy_accelerate(strategy_content) + '\n'
+    strategy_content = replace_direct_accelerate(strategy_content) + '\n'
+    strategy_content = replace_proxy_accelerate(strategy_content) + '\n'
     
     combined_content = combined_content + strategy_content
     #基础配置
