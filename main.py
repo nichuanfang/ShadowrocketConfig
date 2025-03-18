@@ -7,9 +7,9 @@ import os
 from datetime import datetime
 
 # 通用模块
-general_module_line = '[General]\n'
+general_module_line = '[General]'
 #路由模块
-rule_module_line = '[Rule]\n'
+rule_module_line = '[Rule]'
 
 def read_file(file_path):
     with open(file_path, 'r', encoding='utf-8') as file:
@@ -24,61 +24,64 @@ def replace_direct(strategy_content):
     """
     替换策略内容中的 {direct} 占位符为 direct.conf 文件中的实际内容。
     """
-    direct_content = read_file('config/rules/direct.conf')
-    return strategy_content.replace('{direct}', direct_content)
+    # direct_content = read_file('config/rules/direct.conf')
+    # return strategy_content.replace('{direct}', direct_content)
+    pass
 
 def replace_reject(strategy_content):
     """
     替换策略内容中的 {reject} 占位符为 reject.conf 文件中的实际内容。
     """
-    reject_content = read_file('config/rules/reject.conf')
-    return strategy_content.replace('{reject}', reject_content)
+    # reject_content = read_file('config/rules/reject.conf')
+    # return strategy_content.replace('{reject}', reject_content)
+    pass
 
 def replace_proxy(strategy_content):
     """
     替换策略内容中的 {proxy} 占位符为通过 HTTP 请求获取的远程 URL 内容。
     """
-    import requests
-    response = requests.get('http://example.com/proxy.conf') # 替换为实际的URL
-    proxy_content = response.text
-    return strategy_content.replace('{proxy}', proxy_content)
+    # import requests
+    # response = requests.get('http://example.com/proxy.conf') # 替换为实际的URL
+    # proxy_content = response.text
+    # return strategy_content.replace('{proxy}', proxy_content)
+    pass
 
 def replace_direct_accelerate(strategy_content):
     """
     替换策略内容中的 {direct-accelerate} 占位符为 direct.conf 文件中的内容。
     假设 direct-accelerate 内容与直连规则一致。
     """
-    direct_accelerate_content = read_file('config/rules/direct.conf') # 假设加速规则与直连规则一致
-    return strategy_content.replace('{direct-accelerate}', direct_accelerate_content)
+    # direct_accelerate_content = read_file('config/rules/direct.conf') # 假设加速规则与直连规则一致
+    # return strategy_content.replace('{direct-accelerate}', direct_accelerate_content)
+    pass
 
 def replace_proxy_accelerate(strategy_content):
     """
     替换策略内容中的 {proxy-accelerate} 占位符为远程 URL 中获取的加速代理规则内容。
     """
-    import requests
-    response = requests.get('http://example.com/proxy-accelerate.conf') # 替换为实际的URL
-    proxy_accelerate_content = response.text
-    return strategy_content.replace('{proxy-accelerate}', proxy_accelerate_content)
+    # import requests
+    # response = requests.get('http://example.com/proxy-accelerate.conf') # 替换为实际的URL
+    # proxy_accelerate_content = response.text
+    # return strategy_content.replace('{proxy-accelerate}', proxy_accelerate_content)
+    pass
 
 def process_strategy(general_content, base_content, strategy_content, custom_direct, custom_proxy, custom_reject):
     # 通用配置
-    combined_content = general_module_line + general_content + '\n'
+    combined_content = general_module_line + general_content + '\n\n'
     #路由规则
-    combined_content = combined_content + rule_module_line
-    strategy_content = strategy_content.replace('{custom-direct}', custom_direct)
-    strategy_content = strategy_content.replace('{custom-proxy}', custom_proxy)
-    strategy_content = strategy_content.replace('{custom-reject}', custom_reject)
-    strategy_content = replace_direct(strategy_content)
-    strategy_content = replace_reject(strategy_content)
-    strategy_content = replace_proxy(strategy_content)
-    strategy_content = replace_direct_accelerate(strategy_content)
-    strategy_content = replace_proxy_accelerate(strategy_content)
+    combined_content = combined_content + rule_module_line + '\n'
+    strategy_content = strategy_content.replace('{custom-direct}', custom_direct) + '\n'
+    strategy_content = strategy_content.replace('{custom-proxy}', custom_proxy) + '\n'
+    strategy_content = strategy_content.replace('{custom-reject}', custom_reject) + '\n'
+    # strategy_content = replace_direct(strategy_content) + '\n'
+    # strategy_content = replace_reject(strategy_content) + '\n'
+    # strategy_content = replace_proxy(strategy_content) + '\n'
+    # strategy_content = replace_direct_accelerate(strategy_content) + '\n'
+    # strategy_content = replace_proxy_accelerate(strategy_content) + '\n'
     
-    combined_content = combined_content + strategy_content + '\n'
+    combined_content = combined_content + strategy_content
     #基础配置
     combined_content = combined_content + base_content
-    
-    
     return combined_content
 
 def main():
