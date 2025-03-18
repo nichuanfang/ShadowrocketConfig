@@ -47,7 +47,8 @@ def main():
     for strategy_file in strategy_files:
         strategy_name = os.path.basename(strategy_file)
         strategy_content = read_file(strategy_file)
-        output_content = process_strategy(general_content, base_content, strategy_content, custom_direct, custom_proxy, custom_reject)
+        current_date = datetime.now().strftime("# Shadowrocket: %Y-%m-%d %H:%M:%S\n")
+        output_content = current_date + process_strategy(general_content, base_content, strategy_content, custom_direct, custom_proxy, custom_reject)
         write_file(f'dist/{strategy_name}', output_content)
 
 if __name__ == '__main__':
