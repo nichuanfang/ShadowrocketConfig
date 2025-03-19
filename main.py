@@ -49,21 +49,24 @@ def replace_direct(strategy_content):
     """
     替换策略内容中的 {direct} 
     """
-    direct_content = read_file('config/rules/direct.conf')
+    # direct_content = read_file('config/rules/direct.conf')
+    direct_content = extract_rules_from(direct_url)
     return strategy_content.replace('{direct}', direct_content)
 
 def replace_reject(strategy_content):
     """
     替换策略内容中的 {reject} 
     """
-    reject_content = read_file('config/rules/reject.conf')
+    # reject_content = read_file('config/rules/reject.conf')
+    reject_content = extract_rules_from(reject_url)
     return strategy_content.replace('{reject}', reject_content)
 
 def replace_proxy(strategy_content):
     """
     替换策略内容中的 {proxy}
     """
-    proxy_content = read_file('config/rules/proxy.conf')
+    # proxy_content = read_file('config/rules/proxy.conf')
+    proxy_content = extract_rules_from(proxy_url)
     return strategy_content.replace('{reject}', proxy_content)
 
 def replace_direct_accelerate(strategy_content):
