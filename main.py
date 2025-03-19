@@ -47,27 +47,24 @@ def extract_rules_from(source: str) -> str or None:
 
 def replace_direct(strategy_content):
     """
-    替换策略内容中的 {direct} 占位符为 direct.conf 文件中的实际内容。
+    替换策略内容中的 {direct} 
     """
-    result = extract_rules_from(direct_url)
-    if result:
-        return strategy_content.replace('{direct}', result)
+    direct_content = read_file('config/rules/direct.conf')
+    return strategy_content.replace('{direct}', direct_content)
 
 def replace_reject(strategy_content):
     """
-    替换策略内容中的 {reject} 占位符为 reject.conf 文件中的实际内容。
+    替换策略内容中的 {reject} 
     """
-    result = extract_rules_from(direct_url)
-    if result:
-        return strategy_content.replace('{reject}', result)
+    reject_content = read_file('config/rules/reject.conf')
+    return strategy_content.replace('{reject}', reject_content)
 
 def replace_proxy(strategy_content):
     """
-    替换策略内容中的 {proxy} 占位符为通过 HTTP 请求获取的远程 URL 内容。
+    替换策略内容中的 {proxy}
     """
-    result = extract_rules_from(direct_url)
-    if result:
-        return strategy_content.replace('{proxy}', result)
+    proxy_content = read_file('config/rules/proxy.conf')
+    return strategy_content.replace('{reject}', proxy_content)
 
 def replace_direct_accelerate(strategy_content):
     """
@@ -105,9 +102,9 @@ def process_strategy(general_content, base_content, strategy_content, custom_dir
 
 def main():
     # 读取自定义规则
-    custom_direct = read_file('config/rules/direct.conf')
-    custom_proxy = read_file('config/rules/proxy.conf')
-    custom_reject = read_file('config/rules/reject.conf')
+    custom_direct = read_file('config/rules/custom_direct.conf')
+    custom_proxy = read_file('config/rules/custom_proxy.conf')
+    custom_reject = read_file('config/rules/custom_reject.conf')
 
     # 读取base.conf和general.conf
     base_content = read_file('base.conf')
