@@ -38,21 +38,21 @@ jobs:
       #     gist_id: ${{ secrets.BLACK_GIST_ID }}
       #     file_path: dist/shadowrocket_black.conf
 
-      # - name: 黑名单规则(广告拦截)
+      # - name: 黑名单规则_广告拦截
       #   uses: exuanbo/actions-deploy-gist@v1.1.4
       #   with:
       #     token: ${{ secrets.GH_TOKEN }}
       #     gist_id: ${{ secrets.BLACK_AD_GIST_ID }}
       #     file_path: dist/shadowrocket_black_ad.conf
 
-      # - name: 黑名单规则(加速)
+      # - name: 黑名单规则_加速
       #   uses: exuanbo/actions-deploy-gist@v1.1.4
       #   with:
       #     token: ${{ secrets.GH_TOKEN }}
       #     gist_id: ${{ secrets.BLACK_ACCELERATE_GIST_ID }}
       #     file_path: dist/shadowrocket_black_accelerate.conf
 
-      # - name: 黑名单规则(加速+广告拦截)
+      # - name: 黑名单规则_加速_广告拦截
       #   uses: exuanbo/actions-deploy-gist@v1.1.4
       #   with:
       #     token: ${{ secrets.GH_TOKEN }}
@@ -66,21 +66,21 @@ jobs:
       #     gist_id: ${{ secrets.WHITE_GIST_ID }}
       #     file_path: dist/shadowrocket_white.conf
 
-      # - name: 白名单规则(广告拦截)
+      # - name: 白名单规则_广告拦截
       #   uses: exuanbo/actions-deploy-gist@v1.1.4
       #   with:
       #     token: ${{ secrets.GH_TOKEN }}
       #     gist_id: ${{ secrets.WHITE_AD_GIST_ID }}
       #     file_path: dist/shadowrocket_white_ad.conf
 
-      # - name: 白名单规则(加速)
+      # - name: 白名单规则_加速
       #   uses: exuanbo/actions-deploy-gist@v1.1.4
       #   with:
       #     token: ${{ secrets.GH_TOKEN }}
       #     gist_id: ${{ secrets.WHITE_ACCELERATE_GIST_ID }}
       #     file_path: dist/shadowrocket_white_accelerate.conf
 
-      - name: 白名单规则(加速+广告拦截)
+      - name: 白名单规则_广告拦截
         uses: exuanbo/actions-deploy-gist@v1.1.4
         with:
           token: ${{ secrets.GH_TOKEN }}
