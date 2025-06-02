@@ -57,8 +57,8 @@ def replace_reject(strategy_content):
     """
     替换策略内容中的 {reject} 
     """
-    # reject_content = read_file('config/rules/reject.conf')
-    reject_content = extract_rules_from(reject_url)
+    reject_content = read_file('config/rules/reject.conf')
+    # reject_content = extract_rules_from(reject_url)
     return strategy_content.replace('{reject}', reject_content)
 
 def replace_proxy(strategy_content):
