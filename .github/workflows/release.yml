@@ -73,16 +73,16 @@ jobs:
       #     gist_id: ${{ secrets.WHITE_AD_GIST_ID }}
       #     file_path: dist/shadowrocket_white_ad.conf
 
-      - name: 白名单规则(加速)
-        uses: exuanbo/actions-deploy-gist@v1.1.4
-        with:
-          token: ${{ secrets.GH_TOKEN }}
-          gist_id: ${{ secrets.WHITE_ACCELERATE_GIST_ID }}
-          file_path: dist/shadowrocket_white_accelerate.conf
-
-      # - name: 白名单规则(加速+广告拦截)
+      # - name: 白名单规则(加速)
       #   uses: exuanbo/actions-deploy-gist@v1.1.4
       #   with:
       #     token: ${{ secrets.GH_TOKEN }}
-      #     gist_id: ${{ secrets.WHITE_ACCELERATE_AD_GIST_ID }}
-      #     file_path: dist/shadowrocket_white_accelerate_ad.conf
+      #     gist_id: ${{ secrets.WHITE_ACCELERATE_GIST_ID }}
+      #     file_path: dist/shadowrocket_white_accelerate.conf
+
+      - name: 白名单规则(加速+广告拦截)
+        uses: exuanbo/actions-deploy-gist@v1.1.4
+        with:
+          token: ${{ secrets.GH_TOKEN }}
+          gist_id: ${{ secrets.WHITE_ACCELERATE_AD_GIST_ID }}
+          file_path: dist/shadowrocket_white_accelerate_ad.conf
