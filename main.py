@@ -13,7 +13,7 @@ direct_url = 'https://cdn.jsdelivr.net/gh/GMOogway/shadowrocket-rules@master/sr_
 # 代理地址
 proxy_url = 'https://cdn.jsdelivr.net/gh/GMOogway/shadowrocket-rules@master/sr_proxy_list.module'
 # 拦截地址
-reject_url = 'https://cdn.jsdelivr.net/gh/GMOogway/shadowrocket-rules@master/sr_reject_list.module'
+reject_url = 'https://raw.githubusercontent.com/limbopro/Adblock4limbo/refs/heads/main/Shadowrocket/rule/Adblock4limbo.list'
 
 
 def read_file(file_path):
