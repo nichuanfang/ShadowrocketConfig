@@ -31,6 +31,13 @@ jobs:
         run: |
           python main.py
 
+      - name: 免费规则
+        uses: exuanbo/actions-deploy-gist@v1.1.4
+        with:
+          token: ${{ secrets.GH_TOKEN }}
+          gist_id: ${{ secrets.FREE_GIST_ID }}
+          file_path: shadowrocket_free.conf
+
       - name: 黑名单规则
         uses: exuanbo/actions-deploy-gist@v1.1.4
         with:
