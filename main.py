@@ -49,8 +49,8 @@ def replace_direct(strategy_content):
     """
     替换策略内容中的 {direct} 
     """
-    # direct_content = read_file('config/rules/direct.conf')
-    direct_content = extract_rules_from(direct_url)
+    direct_content = read_file('config/rules/direct.conf')
+    # direct_content = extract_rules_from(direct_url)
     return strategy_content.replace('{direct}', direct_content)
 
 def replace_reject(strategy_content):
