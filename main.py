@@ -65,8 +65,8 @@ def replace_proxy(strategy_content):
     """
     替换策略内容中的 {proxy}
     """
-    # proxy_content = read_file('config/rules/proxy.conf')
-    proxy_content = extract_rules_from(proxy_url)
+    proxy_content = read_file('config/rules/proxy.conf')
+    # proxy_content = extract_rules_from(proxy_url)
     return strategy_content.replace('{reject}', proxy_content)
 
 def replace_direct_accelerate(strategy_content):
