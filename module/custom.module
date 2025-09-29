@@ -1,0 +1,10 @@
+#!name=自用模块(2025年09月29日更新)
+#!desc=自用模块 For Quantumult X & Surge & Shadowrocket & Loon & Stash & 油猴 
+
+[URL Rewrite]
+
+# www.google.com 跳转
+(^https?:\/\/www\.google\.com)(\/search\?q.*) https://www.google.com.hk$2 307
+
+[MITM]
+hostname = %APPEND%  www.google.com, www.google.com.hk
