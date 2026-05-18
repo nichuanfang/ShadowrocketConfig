@@ -67,7 +67,7 @@ def replace_proxy(strategy_content):
     """
     proxy_content = read_file('config/rules/proxy.conf')
     # proxy_content = extract_rules_from(proxy_url)
-    return strategy_content.replace('{reject}', proxy_content)
+    return strategy_content.replace('{proxy}', proxy_content)
 
 def replace_direct_accelerate(strategy_content):
     """
