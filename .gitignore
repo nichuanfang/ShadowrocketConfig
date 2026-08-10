@@ -177,3 +177,5 @@ cython_debug/
 dist/*
 !dist/.gitkeep
 .aider*
+
+.DS_Store
