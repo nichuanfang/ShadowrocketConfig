@@ -1,136 +1,185 @@
-# 处理小火箭配置文件的入口文件
+"""Build the Shadowrocket configuration profiles in ``dist/``."""
 
 import os
+import re
+import tempfile
 from datetime import datetime
-import requests
-
-# 通用模块
-general_module_line = '[General]\n'
-#路由模块
-rule_module_line = '[Rule]\n'
-# 直连地址
-direct_url = 'https://cdn.jsdelivr.net/gh/GMOogway/shadowrocket-rules@master/sr_direct_list.module'
-# 代理地址
-proxy_url = 'https://cdn.jsdelivr.net/gh/GMOogway/shadowrocket-rules@master/sr_proxy_list.module'
-# 拦截地址
-reject_url = 'https://raw.githubusercontent.com/limbopro/Adblock4limbo/refs/heads/main/Shadowrocket/rule/Adblock4limbo.list'
+from pathlib import Path
+from typing import Dict, Mapping, Optional
 
 
-def read_file(file_path):
-    with open(file_path, 'r', encoding='utf-8') as file:
-        return file.read()
+PROJECT_ROOT = Path(__file__).resolve().parent
+STRATEGY_FILES = (
+    "black.conf",
+    "black_ad.conf",
+    "black_accelerate.conf",
+    "black_accelerate_ad.conf",
+    "white.conf",
+    "white_ad.conf",
+    "white_accelerate.conf",
+    "white_accelerate_ad.conf",
+)
+PLACEHOLDER_PATTERN = re.compile(r"\{([^{}]+)\}")
+SECTION_PATTERN = re.compile(r"^\s*\[([^\]]+)\]\s*$")
+REQUIRED_SECTIONS = ("General", "Rule", "Host", "URL Rewrite")
 
-def write_file(file_path, content):
-    os.makedirs(os.path.dirname(file_path), exist_ok=True)
-    with open(file_path, 'w+', encoding='utf-8') as file:
-        file.write(content)
-        
-def extract_rules_from(source: str) -> str or None:
-    """
-    从源文本中提取 [Rule] 部分的内容。
 
-    Args:
-        source (str): 包含规则的源文本。
+def read_file(file_path: Path) -> str:
+    """Read a UTF-8 project input file."""
+    return file_path.read_text(encoding="utf-8")
 
-    Returns:
-        str or None: 如果找到 [Rule] 部分，则返回提取的规则字符串；否则返回 None。
-    """
-    raw = requests.get(direct_url)
-    text = raw.text
-    # 使用正则表达式查找 [Rule] 部分及其后面的所有内容，直到文本结束
-    start_index = text.find("[Rule]")
-    if start_index != -1:
-        rules = text[start_index + len("[Rule]"):]
-        return rules.strip()
-    else:
-        return None
 
-def replace_direct(strategy_content):
-    """
-    替换策略内容中的 {direct} 
-    """
-    direct_content = read_file('config/rules/direct.conf')
-    # direct_content = extract_rules_from(direct_url)
-    return strategy_content.replace('{direct}', direct_content)
+def _read_fragments(project_root: Path) -> Dict[str, str]:
+    """Load common inputs once for one deterministic render pass."""
+    inputs = {
+        "general": project_root / "config/general/general.conf",
+        "base": project_root / "base.conf",
+        "custom-direct": project_root / "config/rules/custom_direct.conf",
+        "custom-proxy": project_root / "config/rules/custom_proxy.conf",
+        "custom-reject": project_root / "config/rules/custom_reject.conf",
+        "direct": project_root / "config/rules/direct.conf",
+        "reject": project_root / "config/rules/reject.conf",
+        "proxy": project_root / "config/rules/proxy.conf",
+        "direct-accelerate": project_root / "config/rules/direct_accelerate.conf",
+        "proxy-accelerate": project_root / "config/rules/proxy_accelerate.conf",
+    }
+    return {name: read_file(path) for name, path in inputs.items()}
 
-def replace_reject(strategy_content):
-    """
-    替换策略内容中的 {reject} 
-    """
-    reject_content = read_file('config/rules/reject.conf')
-    # reject_content = extract_rules_from(reject_url)
-    return strategy_content.replace('{reject}', reject_content)
 
-def replace_proxy(strategy_content):
-    """
-    替换策略内容中的 {proxy}
-    """
-    proxy_content = read_file('config/rules/proxy.conf')
-    # proxy_content = extract_rules_from(proxy_url)
-    return strategy_content.replace('{proxy}', proxy_content)
+def _resolve_template(template: str, replacements: Mapping[str, str], source: Path) -> str:
+    placeholders = set(PLACEHOLDER_PATTERN.findall(template))
+    unknown = placeholders.difference(replacements)
+    if unknown:
+        names = ", ".join("{" + name + "}" for name in sorted(unknown))
+        raise ValueError("Unknown placeholder(s) in {}: {}".format(source, names))
 
-def replace_direct_accelerate(strategy_content):
-    """
-    替换策略内容中的 {direct-accelerate} 占位符为 direct.conf 文件中的内容。
-    假设 direct-accelerate 内容与直连规则一致。
-    """
-    direct_accelerate_content = read_file('config/rules/direct_accelerate.conf')
-    return strategy_content.replace('{direct-accelerate}', direct_accelerate_content)
+    rendered = PLACEHOLDER_PATTERN.sub(
+        lambda match: replacements[match.group(1)], template
+    )
+    unresolved = PLACEHOLDER_PATTERN.findall(rendered)
+    if unresolved:
+        names = ", ".join("{" + name + "}" for name in sorted(set(unresolved)))
+        raise ValueError("Unresolved placeholder(s) in {}: {}".format(source, names))
+    return rendered
 
-def replace_proxy_accelerate(strategy_content):
-    """
-    替换策略内容中的 {proxy-accelerate} 占位符为远程 URL 中获取的加速代理规则内容。
-    """
-    proxy_accelerate_content = read_file('config/rules/proxy_accelerate.conf')
-    return strategy_content.replace('{proxy-accelerate}', proxy_accelerate_content)
 
-def process_strategy(general_content, base_content, strategy_content, custom_direct, custom_proxy, custom_reject):
-    # 通用配置
-    combined_content = general_module_line + general_content + '\n'
-    #路由规则
-    combined_content = combined_content + rule_module_line + '\n'
-    strategy_content = strategy_content.replace('{custom-direct}', custom_direct) + '\n'
-    strategy_content = strategy_content.replace('{custom-proxy}', custom_proxy) + '\n'
-    strategy_content = strategy_content.replace('{custom-reject}', custom_reject) + '\n'
-    strategy_content = replace_direct(strategy_content) + '\n'
-    strategy_content = replace_reject(strategy_content) + '\n'
-    strategy_content = replace_proxy(strategy_content) + '\n'
-    strategy_content = replace_direct_accelerate(strategy_content) + '\n'
-    strategy_content = replace_proxy_accelerate(strategy_content) + '\n'
-    
-    combined_content = combined_content + strategy_content
-    #基础配置
-    combined_content = combined_content + base_content
-    return combined_content
+def _validate_profile(content: str, source: str) -> None:
+    """Reject malformed generated profiles before any output is written."""
+    if PLACEHOLDER_PATTERN.search(content):
+        raise ValueError("Unresolved placeholder in generated profile {}".format(source))
 
-def main():
-    # 读取自定义规则
-    custom_direct = read_file('config/rules/custom_direct.conf')
-    custom_proxy = read_file('config/rules/custom_proxy.conf')
-    custom_reject = read_file('config/rules/custom_reject.conf')
+    sections = []
+    current_section = None
+    rule_lines = []
+    for line in content.splitlines():
+        section_match = SECTION_PATTERN.match(line)
+        if section_match:
+            current_section = section_match.group(1).strip()
+            sections.append(current_section)
+            continue
+        if current_section == "Rule":
+            stripped = line.strip()
+            if stripped and not stripped.startswith("#"):
+                rule_lines.append(stripped)
 
-    # 读取base.conf和general.conf
-    base_content = read_file('base.conf')
-    general_content = read_file('config/general/general.conf')
+    for section in REQUIRED_SECTIONS:
+        count = sections.count(section)
+        if count != 1:
+            raise ValueError(
+                "{} must contain exactly one [{}] section; found {}".format(
+                    source, section, count
+                )
+            )
 
-    # 处理每种策略
-    strategy_files = [
-        'config/strategy/black.conf',
-        'config/strategy/black_ad.conf',
-        'config/strategy/black_accelerate.conf',
-        'config/strategy/black_accelerate_ad.conf',
-        'config/strategy/white.conf',
-        'config/strategy/white_ad.conf',
-        'config/strategy/white_accelerate.conf',
-        'config/strategy/white_accelerate_ad.conf'
-    ]
+    final_rules = [line for line in rule_lines if line.upper().startswith("FINAL,")]
+    if (
+        len(final_rules) != 1
+        or not rule_lines
+        or not rule_lines[-1].upper().startswith("FINAL,")
+    ):
+        raise ValueError(
+            "{} must end its [Rule] section with exactly one FINAL rule".format(source)
+        )
 
-    for strategy_file in strategy_files:
-        strategy_name = f'shadowrocket_{os.path.basename(strategy_file)}'
-        strategy_content = read_file(strategy_file)
-        current_date = datetime.now().strftime("# Shadowrocket: %Y-%m-%d %H:%M:%S\n")
-        output_content = current_date + process_strategy(general_content, base_content, strategy_content, custom_direct, custom_proxy, custom_reject)
-        write_file(f'dist/{strategy_name}', output_content)
 
-if __name__ == '__main__':
+def render_profiles(
+    project_root: Path = PROJECT_ROOT,
+    generated_at: Optional[datetime] = None,
+) -> Dict[str, str]:
+    """Render and validate every profile without writing files or using the network."""
+    project_root = Path(project_root).resolve()
+    fragments = _read_fragments(project_root)
+    timestamp = generated_at or datetime.now()
+    header = timestamp.strftime("# Shadowrocket: %Y-%m-%d %H:%M:%S")
+
+    replacements = {name: value for name, value in fragments.items() if name not in ("general", "base")}
+    profiles = {}
+
+    for strategy_name in STRATEGY_FILES:
+        strategy_path = project_root / "config/strategy" / strategy_name
+        strategy = _resolve_template(read_file(strategy_path), replacements, strategy_path)
+        content = "\n".join(
+            (
+                header,
+                "[General]",
+                fragments["general"].rstrip("\n"),
+                "",
+                "[Rule]",
+                "",
+                strategy.rstrip("\n"),
+                "",
+                fragments["base"].rstrip("\n"),
+                "",
+            )
+        )
+        _validate_profile(content, strategy_name)
+        profiles["shadowrocket_" + strategy_name] = content
+
+    return profiles
+
+
+def write_profiles(project_root: Path, profiles: Mapping[str, str]) -> None:
+    """Stage all generated files, then atomically replace their destinations."""
+    project_root = Path(project_root).resolve()
+    for filename, content in profiles.items():
+        if Path(filename).name != filename:
+            raise ValueError("Invalid profile output filename: {}".format(filename))
+        _validate_profile(content, filename)
+
+    output_dir = project_root / "dist"
+    output_dir.mkdir(parents=True, exist_ok=True)
+    staged = []
+
+    try:
+        for filename, content in profiles.items():
+            destination = output_dir / filename
+            with tempfile.NamedTemporaryFile(
+                mode="w",
+                encoding="utf-8",
+                newline="\n",
+                prefix="." + filename + ".",
+                suffix=".tmp",
+                dir=str(output_dir),
+                delete=False,
+            ) as temporary:
+                temporary_path = Path(temporary.name)
+                staged.append((temporary_path, destination))
+                temporary.write(content)
+            os.chmod(str(temporary_path), 0o644)
+
+        for temporary_path, destination in staged:
+            os.replace(str(temporary_path), str(destination))
+    finally:
+        for temporary_path, _ in staged:
+            if temporary_path.exists():
+                temporary_path.unlink()
+
+
+def main() -> None:
+    """Build all supported profiles using paths relative to this script."""
+    profiles = render_profiles(PROJECT_ROOT)
+    write_profiles(PROJECT_ROOT, profiles)
+
+
+if __name__ == "__main__":
     main()
