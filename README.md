@@ -2,6 +2,12 @@
 
 A repository for shadowrocket
 
+## 国内使用建议
+
+在国内且国内外访问大致各半时，优先使用白名单系列（`shadowrocket_white*.conf`）：国内规则和 CN GeoIP 直连，其余流量走 `PROXY`。带 `accelerate` 的版本额外加入代理加速规则；带 `_ad` 的版本加载广告拦截规则。`PROXY` 使用 Shadowrocket 当前选择的代理，本项目不做节点测速或切换。
+
+更新配置后，可在 Shadowrocket 中分别测试一个国内域名、一个普通海外域名和一个 AI 域名的冷缓存/热缓存首开，并确认分流与 DNS 解析均成功。单节点线路的带宽和服务端解析耗时不由本项目生成器决定。
+
 ## 1.配置说明
 
 ```markdown
@@ -246,7 +252,7 @@ RULE-SET,https://url/ios_rule_script/master/rule/Shadowrocket/BiliBili/BiliBili.
 RULE-SET,https://url/ios_rule_script/master/rule/Shadowrocket/NetEaseMusic/NetEaseMusic.list,DIRECT
 RULE-SET,https://url/ios_rule_script/master/rule/Shadowrocket/Baidu/Baidu.list,DIRECT
 RULE-SET,https://url/ios_rule_script/master/rule/Shadowrocket/DouBan/DouBan.list,DIRECT
-RULE-SET,https://url/ios_rule_script/master/rule/QuantumultX/WeChat/WeChat.list,DIRECT
+RULE-SET,https://url/ios_rule_script/master/rule/Shadowrocket/WeChat/WeChat.list,DIRECT
 RULE-SET,https://url/ios_rule_script/master/rule/Shadowrocket/DouYin/DouYin.list,DIRECT
 RULE-SET,https://url/ios_rule_script/master/rule/Shadowrocket/Weibo/Weibo.list,DIRECT
 RULE-SET,https://url/ios_rule_script/master/rule/Shadowrocket/Zhihu/Zhihu.list,DIRECT
@@ -272,8 +278,8 @@ RULE-SET,https://url/ios_rule_script/master/rule/Shadowrocket/Google/Google.list
 RULE-SET,https://url/ios_rule_script/master/rule/Shadowrocket/TikTok/TikTok.list,PROXY
 RULE-SET,https://url/ios_rule_script/master/rule/Shadowrocket/GitHub/GitHub.list,PROXY
 RULE-SET,https://url/ios_rule_script/master/rule/Shadowrocket/Speedtest/Speedtest.list,PROXY
-RULE-SET,https://url/ios_rule_script/master/rule/QuantumultX/Global/Global.list,PROXY
-RULE-SET,https://url/ios_rule_script/master/rule/QuantumultX/China/China.list,DIRECT
+RULE-SET,https://url/ios_rule_script/master/rule/Shadowrocket/Global/Global.list,PROXY
+RULE-SET,https://url/ios_rule_script/master/rule/Shadowrocket/China/China.list,DIRECT
 
 # 本地局域网地址的规则集。
 
@@ -307,8 +313,8 @@ localhost = 127.0.0.1
 
 # Google 搜索引擎防跳转的重写。
 
-^https?://(www.)?g.cn https://www.google.com 302
-^https?://(www.)?google.cn https://www.google.com 302
+^https?://(www\.)?g\.cn https://www.google.com 302
+^https?://(www\.)?google\.cn https://www.google.com 302
 
 [Script]
 
