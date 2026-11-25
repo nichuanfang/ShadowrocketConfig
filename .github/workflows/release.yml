@@ -11,15 +11,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@v7.0.1
         with:
           fetch-depth: 0
 
-      # set python
-      - name: Set up Python 3.8
-        uses: actions/setup-python@v2.2.2
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v7.1.0
         with:
-          python-version: 3.8
+          python-version: '3.12'
 
       # Validate before generating or publishing any Gist.
       - name: Test generator
@@ -27,68 +26,48 @@ jobs:
 
       # Prepare all profiles; generation validates the complete output set before writing.
       - name: prepare
-        run: |
-          python main.py
+        run: python main.py
 
-      - name: 免费规则
-        uses: exuanbo/actions-deploy-gist@v1.1.4
+      - name: Publish profiles to Gists
+        uses: actions/github-script@v9.0.0
+        env:
+          FREE_GIST_ID: ${{ secrets.FREE_GIST_ID }}
+          BLACK_GIST_ID: ${{ secrets.BLACK_GIST_ID }}
+          BLACK_AD_GIST_ID: ${{ secrets.BLACK_AD_GIST_ID }}
+          BLACK_ACCELERATE_GIST_ID: ${{ secrets.BLACK_ACCELERATE_GIST_ID }}
+          BLACK_ACCELERATE_AD_GIST_ID: ${{ secrets.BLACK_ACCELERATE_AD_GIST_ID }}
+          WHITE_GIST_ID: ${{ secrets.WHITE_GIST_ID }}
+          WHITE_AD_GIST_ID: ${{ secrets.WHITE_AD_GIST_ID }}
+          WHITE_ACCELERATE_GIST_ID: ${{ secrets.WHITE_ACCELERATE_GIST_ID }}
+          WHITE_ACCELERATE_AD_GIST_ID: ${{ secrets.WHITE_ACCELERATE_AD_GIST_ID }}
         with:
-          token: ${{ secrets.GH_TOKEN }}
-          gist_id: ${{ secrets.FREE_GIST_ID }}
-          file_path: shadowrocket_free.conf
+          github-token: ${{ secrets.GH_TOKEN }}
+          script: |
+            const fs = require('fs');
+            const path = require('path');
 
-      - name: 黑名单规则
-        uses: exuanbo/actions-deploy-gist@v1.1.4
-        with:
-          token: ${{ secrets.GH_TOKEN }}
-          gist_id: ${{ secrets.BLACK_GIST_ID }}
-          file_path: dist/shadowrocket_black.conf
+            const profiles = [
+              ['免费规则', process.env.FREE_GIST_ID, 'shadowrocket_free.conf'],
+              ['黑名单规则', process.env.BLACK_GIST_ID, 'dist/shadowrocket_black.conf'],
+              ['黑名单规则_广告拦截', process.env.BLACK_AD_GIST_ID, 'dist/shadowrocket_black_ad.conf'],
+              ['黑名单规则_加速', process.env.BLACK_ACCELERATE_GIST_ID, 'dist/shadowrocket_black_accelerate.conf'],
+              ['黑名单规则_加速_广告拦截', process.env.BLACK_ACCELERATE_AD_GIST_ID, 'dist/shadowrocket_black_accelerate_ad.conf'],
+              ['白名单规则', process.env.WHITE_GIST_ID, 'dist/shadowrocket_white.conf'],
+              ['白名单规则_广告拦截', process.env.WHITE_AD_GIST_ID, 'dist/shadowrocket_white_ad.conf'],
+              ['白名单规则_加速', process.env.WHITE_ACCELERATE_GIST_ID, 'dist/shadowrocket_white_accelerate.conf'],
+              ['白名单规则_加速_广告拦截', process.env.WHITE_ACCELERATE_AD_GIST_ID, 'dist/shadowrocket_white_accelerate_ad.conf'],
+            ];
 
-      - name: 黑名单规则_广告拦截
-        uses: exuanbo/actions-deploy-gist@v1.1.4
-        with:
-          token: ${{ secrets.GH_TOKEN }}
-          gist_id: ${{ secrets.BLACK_AD_GIST_ID }}
-          file_path: dist/shadowrocket_black_ad.conf
+            for (const [name, gistId, filePath] of profiles) {
+              if (!gistId) {
+                throw new Error(`Missing Gist ID secret for ${name}`);
+              }
 
-      - name: 黑名单规则_加速
-        uses: exuanbo/actions-deploy-gist@v1.1.4
-        with:
-          token: ${{ secrets.GH_TOKEN }}
-          gist_id: ${{ secrets.BLACK_ACCELERATE_GIST_ID }}
-          file_path: dist/shadowrocket_black_accelerate.conf
-
-      - name: 黑名单规则_加速_广告拦截
-        uses: exuanbo/actions-deploy-gist@v1.1.4
-        with:
-          token: ${{ secrets.GH_TOKEN }}
-          gist_id: ${{ secrets.BLACK_ACCELERATE_AD_GIST_ID }}
-          file_path: dist/shadowrocket_black_accelerate_ad.conf
-
-      - name: 白名单规则
-        uses: exuanbo/actions-deploy-gist@v1.1.4
-        with:
-          token: ${{ secrets.GH_TOKEN }}
-          gist_id: ${{ secrets.WHITE_GIST_ID }}
-          file_path: dist/shadowrocket_white.conf
-
-      - name: 白名单规则_广告拦截
-        uses: exuanbo/actions-deploy-gist@v1.1.4
-        with:
-          token: ${{ secrets.GH_TOKEN }}
-          gist_id: ${{ secrets.WHITE_AD_GIST_ID }}
-          file_path: dist/shadowrocket_white_ad.conf
-
-      - name: 白名单规则_加速
-        uses: exuanbo/actions-deploy-gist@v1.1.4
-        with:
-          token: ${{ secrets.GH_TOKEN }}
-          gist_id: ${{ secrets.WHITE_ACCELERATE_GIST_ID }}
-          file_path: dist/shadowrocket_white_accelerate.conf
-
-      - name: 白名单规则_加速_广告拦截
-        uses: exuanbo/actions-deploy-gist@v1.1.4
-        with:
-          token: ${{ secrets.GH_TOKEN }}
-          gist_id: ${{ secrets.WHITE_ACCELERATE_AD_GIST_ID }}
-          file_path: dist/shadowrocket_white_accelerate_ad.conf
+              const content = fs.readFileSync(filePath, 'utf8');
+              const fileName = path.basename(filePath);
+              await github.rest.gists.update({
+                gist_id: gistId,
+                files: { [fileName]: { content } },
+              });
+              console.log(`Updated ${name}: ${fileName}`);
+            }
