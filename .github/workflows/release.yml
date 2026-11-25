@@ -42,6 +42,8 @@ jobs:
           WHITE_ACCELERATE_AD_GIST_ID: ${{ secrets.WHITE_ACCELERATE_AD_GIST_ID }}
         with:
           github-token: ${{ secrets.GH_TOKEN }}
+          retries: 3
+          retry-exempt-status-codes: 400,401,403,404,422
           script: |
             const fs = require('fs');
             const path = require('path');
@@ -65,9 +67,13 @@ jobs:
 
               const content = fs.readFileSync(filePath, 'utf8');
               const fileName = path.basename(filePath);
-              await github.rest.gists.update({
-                gist_id: gistId,
-                files: { [fileName]: { content } },
-              });
+              try {
+                await github.rest.gists.update({
+                  gist_id: gistId,
+                  files: { [fileName]: { content } },
+                });
+              } catch (error) {
+                throw new Error(`${name} (${fileName}) failed with HTTP ${error.status}`);
+              }
               console.log(`Updated ${name}: ${fileName}`);
             }
