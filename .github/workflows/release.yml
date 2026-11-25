@@ -24,9 +24,12 @@ jobs:
       - name: Test generator
         run: python -m unittest discover -s tests -v
 
-      # Prepare all profiles; generation validates the complete output set before writing.
+      - name: Test publisher
+        run: node --test tests/js/gist-publisher.test.cjs
+
+      # Prepare all profiles and validate every release artifact before publishing.
       - name: prepare
-        run: python main.py
+        run: python main.py --release
 
       - name: Publish profiles to Gists
         uses: actions/github-script@v9.0.0
@@ -45,35 +48,5 @@ jobs:
           retries: 3
           retry-exempt-status-codes: 400,401,403,404,422
           script: |
-            const fs = require('fs');
-            const path = require('path');
-
-            const profiles = [
-              ['免费规则', process.env.FREE_GIST_ID, 'shadowrocket_free.conf'],
-              ['黑名单规则', process.env.BLACK_GIST_ID, 'dist/shadowrocket_black.conf'],
-              ['黑名单规则_广告拦截', process.env.BLACK_AD_GIST_ID, 'dist/shadowrocket_black_ad.conf'],
-              ['黑名单规则_加速', process.env.BLACK_ACCELERATE_GIST_ID, 'dist/shadowrocket_black_accelerate.conf'],
-              ['黑名单规则_加速_广告拦截', process.env.BLACK_ACCELERATE_AD_GIST_ID, 'dist/shadowrocket_black_accelerate_ad.conf'],
-              ['白名单规则', process.env.WHITE_GIST_ID, 'dist/shadowrocket_white.conf'],
-              ['白名单规则_广告拦截', process.env.WHITE_AD_GIST_ID, 'dist/shadowrocket_white_ad.conf'],
-              ['白名单规则_加速', process.env.WHITE_ACCELERATE_GIST_ID, 'dist/shadowrocket_white_accelerate.conf'],
-              ['白名单规则_加速_广告拦截', process.env.WHITE_ACCELERATE_AD_GIST_ID, 'dist/shadowrocket_white_accelerate_ad.conf'],
-            ];
-
-            for (const [name, gistId, filePath] of profiles) {
-              if (!gistId) {
-                throw new Error(`Missing Gist ID secret for ${name}`);
-              }
-
-              const content = fs.readFileSync(filePath, 'utf8');
-              const fileName = path.basename(filePath);
-              try {
-                await github.rest.gists.update({
-                  gist_id: gistId,
-                  files: { [fileName]: { content } },
-                });
-              } catch (error) {
-                throw new Error(`${name} (${fileName}) failed with HTTP ${error.status}`);
-              }
-              console.log(`Updated ${name}: ${fileName}`);
-            }
+            const { publishRelease } = require('./.github/scripts/gist-publisher.cjs');
+            await publishRelease(process.env.GITHUB_WORKSPACE, process.env, github);

@@ -337,7 +337,9 @@ Rewrite: BoxJs = type=http-request,pattern=https?:\/\/boxjs\.(com|net),script-pa
 hostname = www.google.cn`
 ```
 
-## 2.占位符说明
+## 2.占位符与配置清单
+
+规则片段统一放在 `config/rules/`。文件名会将下划线转换为连字符，并作为策略模板中的占位符，例如 `custom_direct.conf` 对应 `{custom-direct}`。策略模板继续放在 `config/strategy/`，由模板内容决定规则顺序。
 
 ```conf
 # 占位符说明
@@ -349,6 +351,28 @@ hostname = www.google.cn`
 ## {reject} 拦截规则
 ## {proxy-accelerate} 加速代理规则
 ## {direct-accelerate} 加速直连规则
+```
+
+`config/profiles.toml` 决定生成哪些配置及其顺序。策略模板使用 `template`，已经维护好的完整配置使用 `source`：
+
+```toml
+[[profiles]]
+id = "white"
+template = "config/strategy/white.conf"
+gist_secret = "WHITE_GIST_ID" # 可选；不填写则只在本地生成
+```
+
+生成的策略配置写入 `dist/shadowrocket_<id>.conf`。`source` 配置直接使用原文件，可使用 `shadowrocket_*.conf` 或 `module/*.module`、`module/*.sgmodule`。当前的免费配置因此仍发布为 `shadowrocket_free.conf`。
+
+新增本地配置时，添加策略模板并在清单中登记即可。若要发布到 Gist，创建新的仓库 Secret，再在 `.github/workflows/release.yml` 的发布步骤中把 Secret 名称映射到环境变量。Gist ID 只保存在 GitHub Secrets，清单中不记录值。清单中的 `gist_secret` 必须与环境变量名一致。
+
+本地构建与发布校验：
+
+```sh
+python3 main.py             # 生成策略配置
+python3 main.py --release   # 同时校验静态配置和发布目标，写入 dist/release-plan.json
+python3 -m unittest discover -s tests -v
+node --test tests/js/gist-publisher.test.cjs
 ```
 
 > 感谢[ACL4SSR](https://github.com/ACL4SSR/ACL4SSR/tree/master),[shadowrocket-rules](https://github.com/GMOogway/shadowrocket-rules)和[ios_rule_script](https://github.com/blackmatrix7/ios_rule_script)提供的规则集

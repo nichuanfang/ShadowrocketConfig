@@ -23,7 +23,7 @@ class GeneratorTests(unittest.TestCase):
         self.assertEqual(len(profiles), 8)
         self.assertEqual(
             set(profiles),
-            {"shadowrocket_" + name for name in main.STRATEGY_FILES},
+            set(main.STRATEGY_FILES),
         )
         for name, content in profiles.items():
             with self.subTest(profile=name):
@@ -147,7 +147,7 @@ class GeneratorTests(unittest.TestCase):
             self._copy_build_inputs(copy_root)
             (copy_root / "config/rules/proxy.conf").unlink()
 
-            with self.assertRaises(FileNotFoundError):
+            with self.assertRaisesRegex(ValueError, r"Unknown placeholder.*proxy"):
                 main.render_profiles(copy_root, FIXED_TIME)
 
     def test_write_profiles_validates_every_output_before_staging(self):
@@ -193,6 +193,11 @@ class GeneratorTests(unittest.TestCase):
         destination.mkdir(parents=True, exist_ok=True)
         shutil.copy2(PROJECT_ROOT / "main.py", destination / "main.py")
         shutil.copy2(PROJECT_ROOT / "base.conf", destination / "base.conf")
+        shutil.copy2(
+            PROJECT_ROOT / "shadowrocket_free.conf",
+            destination / "shadowrocket_free.conf",
+        )
+        shutil.copytree(PROJECT_ROOT / "shadowrocket", destination / "shadowrocket")
         shutil.copytree(PROJECT_ROOT / "config", destination / "config")
 
 

@@ -1,0 +1,48 @@
+# Generated profiles are written to dist/shadowrocket_<id>.conf.
+# Release order follows this file. Only profiles with gist_secret are published.
+# Existing Gist IDs stay in GitHub Secrets; keep only their names here.
+
+[[profiles]]
+id = "free"
+source = "shadowrocket_free.conf"
+gist_secret = "FREE_GIST_ID"
+
+[[profiles]]
+id = "black"
+template = "config/strategy/black.conf"
+gist_secret = "BLACK_GIST_ID"
+
+[[profiles]]
+id = "black_ad"
+template = "config/strategy/black_ad.conf"
+gist_secret = "BLACK_AD_GIST_ID"
+
+[[profiles]]
+id = "black_accelerate"
+template = "config/strategy/black_accelerate.conf"
+gist_secret = "BLACK_ACCELERATE_GIST_ID"
+
+[[profiles]]
+id = "black_accelerate_ad"
+template = "config/strategy/black_accelerate_ad.conf"
+gist_secret = "BLACK_ACCELERATE_AD_GIST_ID"
+
+[[profiles]]
+id = "white"
+template = "config/strategy/white.conf"
+gist_secret = "WHITE_GIST_ID"
+
+[[profiles]]
+id = "white_ad"
+template = "config/strategy/white_ad.conf"
+gist_secret = "WHITE_AD_GIST_ID"
+
+[[profiles]]
+id = "white_accelerate"
+template = "config/strategy/white_accelerate.conf"
+gist_secret = "WHITE_ACCELERATE_GIST_ID"
+
+[[profiles]]
+id = "white_accelerate_ad"
+template = "config/strategy/white_accelerate_ad.conf"
+gist_secret = "WHITE_ACCELERATE_AD_GIST_ID"
