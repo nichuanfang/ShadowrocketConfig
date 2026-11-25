@@ -81,24 +81,29 @@ class ManifestTests(unittest.TestCase):
             self.assertNotIn("local", {item["id"] for item in plan["items"]})
 
     def test_release_plan_covers_existing_gists_in_order(self):
-        plan = build_release_plan(PROJECT_ROOT)
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            self._copy_project(root)
+            main.write_profiles(root, main.render_profiles(root, FIXED_TIME))
 
-        self.assertEqual(plan["version"], 1)
-        self.assertEqual(
-            [(item["id"], item["gist_secret"]) for item in plan["items"]],
-            [
-                ("free", "FREE_GIST_ID"),
-                ("black", "BLACK_GIST_ID"),
-                ("black_ad", "BLACK_AD_GIST_ID"),
-                ("black_accelerate", "BLACK_ACCELERATE_GIST_ID"),
-                ("black_accelerate_ad", "BLACK_ACCELERATE_AD_GIST_ID"),
-                ("white", "WHITE_GIST_ID"),
-                ("white_ad", "WHITE_AD_GIST_ID"),
-                ("white_accelerate", "WHITE_ACCELERATE_GIST_ID"),
-                ("white_accelerate_ad", "WHITE_ACCELERATE_AD_GIST_ID"),
-            ],
-        )
-        self.assertTrue(all(item["path"].endswith(".conf") for item in plan["items"]))
+            plan = build_release_plan(root)
+
+            self.assertEqual(plan["version"], 1)
+            self.assertEqual(
+                [(item["id"], item["gist_secret"]) for item in plan["items"]],
+                [
+                    ("free", "FREE_GIST_ID"),
+                    ("black", "BLACK_GIST_ID"),
+                    ("black_ad", "BLACK_AD_GIST_ID"),
+                    ("black_accelerate", "BLACK_ACCELERATE_GIST_ID"),
+                    ("black_accelerate_ad", "BLACK_ACCELERATE_AD_GIST_ID"),
+                    ("white", "WHITE_GIST_ID"),
+                    ("white_ad", "WHITE_AD_GIST_ID"),
+                    ("white_accelerate", "WHITE_ACCELERATE_GIST_ID"),
+                    ("white_accelerate_ad", "WHITE_ACCELERATE_AD_GIST_ID"),
+                ],
+            )
+            self.assertTrue(all(item["path"].endswith(".conf") for item in plan["items"]))
 
     def test_duplicate_ids_and_secret_names_are_rejected(self):
         with tempfile.TemporaryDirectory() as temp_dir:
